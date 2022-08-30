@@ -1,0 +1,11 @@
+.popup-add {
+    text-align: center;
+    font-size: 24px;
+    font-family: Roboto, sans-serif;
+    background: rgba(12, 61, 61, 0.65);
+    height: 60vh;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}

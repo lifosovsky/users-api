@@ -1,0 +1,75 @@
+.interaction-panel {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.interaction-panel__header {
+    font-size: 1.8rem;
+    color: #2c2c2c;
+    font-family: Roboto, sans-serif;
+    width: 50%;
+}
+
+.interaction-panel__buttons {
+    display: flex;
+    width: 50%;
+    justify-content: space-around;
+}
+
+.interaction-btn {
+    cursor: pointer;
+    background: none;
+    font-size: 1.4rem;
+    border: 0.5px solid black;
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s 0s linear;
+    position: relative;
+}
+
+.edit-user:hover {
+    background: #464646;
+    color: white;
+}
+
+.add-user:before {
+    content: "";
+    width: 1px;
+    height: 100%;
+    background: #82ff82;
+    position: absolute;
+    top: 0;
+}
+
+.add-user:after {
+    content: "";
+    width: 1px;
+    height: 100%;
+    background: #82ff82;
+    position: absolute;
+    top: 0;
+    left: 49%;
+    transform: rotate(90deg);
+}
+
+.delete-user:before {
+    content: "";
+    width: 1px;
+    height: 100%;
+    background: #f37373;
+    position: absolute;
+    top: 0;
+    transform: rotate(45deg);
+}
+
+.delete-user:after {
+    content: "";
+    width: 1px;
+    height: 100%;
+    background: #f37373;
+    position: absolute;
+    top: 0;
+    transform: rotate(-45deg);
+}

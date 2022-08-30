@@ -3,7 +3,6 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"learngo/models"
 	"learngo/services"
@@ -16,7 +15,14 @@ type Controller struct {
 	DB *sql.DB
 }
 
+func setupCORS(w *http.ResponseWriter, req *http.Request) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+}
+
 func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
+	setupCORS(&w, r)
 	body, _ := ioutil.ReadAll(r.Body)
 	s := services.UserService{Model: c.DB}
 	u := models.User{}
@@ -30,6 +36,7 @@ func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	setupCORS(&w, r)
 	s := services.UserService{Model: c.DB}
 	result, err := s.GetAllUsers() // обращение к сервису
 	if err != nil {
@@ -40,18 +47,19 @@ func (c *Controller) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) GetUserById(w http.ResponseWriter, r *http.Request) {
+	setupCORS(&w, r)
 	s := services.UserService{Model: c.DB}
 	id, _ := strconv.Atoi(strings.Split(r.URL.Path, "/")[len(strings.Split(r.URL.Path, "/"))-1])
 	result, err := s.GetUserById(id) // обращение к сервису
 	if err != nil {
 		w.Write([]byte("{error: " + err.Error() + "}"))
 	}
-	fmt.Println(id)
 	b, _ := json.Marshal(result)
 	w.Write(b)
 }
 
 func (c *Controller) UpdateUserById(w http.ResponseWriter, r *http.Request) {
+	setupCORS(&w, r)
 	id, _ := strconv.Atoi(strings.Split(r.URL.Path, "/")[len(strings.Split(r.URL.Path, "/"))-1])
 	s := services.UserService{Model: c.DB}
 	resBody, _ := ioutil.ReadAll(r.Body)
@@ -65,6 +73,7 @@ func (c *Controller) UpdateUserById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) DeleteUserById(w http.ResponseWriter, r *http.Request) {
+	setupCORS(&w, r)
 	s := services.UserService{Model: c.DB}
 	id, _ := strconv.Atoi(strings.Split(r.URL.Path, "/")[len(strings.Split(r.URL.Path, "/"))-1])
 	result, err := s.DeleteUserById(id) // обращение к сервису

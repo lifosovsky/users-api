@@ -15,6 +15,7 @@ const dbUri = "user=postgres password=3141 dbname=rbstest host=localhost port=54
 var err error
 
 func main() {
+	fs := http.FileServer(http.Dir("./client/build"))
 	app := http.NewServeMux()
 	model, err := sql.Open("postgres", dbUri); if err != nil { // подключение к базе данных
 		fmt.Println("Connection failed")
@@ -44,6 +45,8 @@ func main() {
 			controller.DeleteUserById(w, r)
 		}
 	})
+
+	app.Handle("/", fs)
 
 	fmt.Println("Server is listening on http://localhost:8000")
 	err = http.ListenAndServe(":8000", app); if err != nil {

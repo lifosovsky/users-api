@@ -1,0 +1,34 @@
+.popup-remove {
+    height: 400px;
+    width: 600px;
+    background: #89ac8e;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.buttons {
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    font-size: 2.4rem;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    color: wheat;
+    background: #f1bebe;
+    transition: all 0.3s 0s linear;
+    border: 1px solid white;
+    cursor: pointer;
+
+}
+
+.btn:hover {
+    background: wheat;
+    color: #eaa6a6;
+    border-color: #eaa6a6;
+}

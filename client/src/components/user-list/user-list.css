@@ -1,0 +1,45 @@
+.user-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alert {
+    text-align: center;
+    font-size: 3.6rem;
+    color: #dabfdb;
+}
+
+.user-list__table {
+    min-width: 40rem;
+    text-align: center;
+    font-family: Roboto, sans-serif;
+}
+
+.th__name {
+    font-size: 2rem;
+    color: #b3c3ff;
+}
+
+.table__line {
+
+}
+
+.odd {
+    background: rgba(211, 211, 211, 0.4);
+}
+
+.even {
+    background: #7a7a7a;
+    color: white;
+}
+
+.user-list__item {
+    font-size: 2rem;
+    padding: 1rem;
+}
+
+.selected {
+    background: #e58f8f;
+    color: aqua;
+}
