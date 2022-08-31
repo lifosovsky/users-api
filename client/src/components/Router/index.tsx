@@ -1,14 +1,16 @@
 import React from 'react';
-import { BrowserRouter, Routes as Switch, Route} from 'react-router-dom';
+import {HashRouter, Route, Routes as Switch} from 'react-router-dom';
 import MainPage from '../../pages/MainPage';
+import PopupLayout from "../Popups/PopupLayout";
 
 const Router = () => {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Switch>
-                <Route path="/" element={<MainPage />} />
+                <Route path="/" element={<MainPage/>}/>
+                <Route path="/user" element={<PopupLayout children={<MainPage/>}/>}/>
             </Switch>
-        </BrowserRouter>
+        </HashRouter>
     );
 };
 

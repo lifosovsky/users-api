@@ -1,56 +1,36 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import UserInteraction from '../../components/user-interaction/user-interaction';
 import UserList from '../../components/user-list/user-list';
-import PopupLayout from '../../components/Popups/PopupLayout';
-import { useQuery } from '../../hooks/router/useQuery';
-import { User } from '../../types/user';
-import { ServerEndPoints, ServerUrl } from '../../consts/server';
-import { UsersContext } from '../../context/users-context';
 import { SelectUserContext } from '../../context/select-user';
+import {localStorageUserKey} from "../../consts/localstorage";
+import './index.css'
 
 const MainPage: FC = () => {
 
-    const [usersData, setUsersData] = useState<User[]>([]);
-    const [selectedUser, setSelectedUser] = useState<null | number>(null);
-    const {isActualData, setActualData} = useContext(UsersContext);
+    const selectedUserFromStorage = Number(localStorage.getItem(localStorageUserKey))
+
+    const [selectedUser, setSelectedUser] = useState<null | number>(selectedUserFromStorage || null);
 
     const selectUser = (id: number | null) => {
-        setSelectedUser(id);
+        if (id == null) {
+            localStorage.removeItem(localStorageUserKey)
+            setSelectedUser(id)
+        } else {
+            setSelectedUser(id);
+            localStorage.setItem(localStorageUserKey, JSON.stringify(id))
+        }
     };
 
-    useEffect(() => {
-        if (isActualData) return;
-        const getUsersData = async () => {
-            try {
-                const response = await fetch(ServerUrl + ServerEndPoints.getAllUsers);
-                const users = await response.json();
-                if (users == null) {
-                    setUsersData([])
-                    setActualData();
-                    return
-                }
-                setUsersData(users);
-                setActualData();
-            } catch (e) {
-                console.log(e);
-            }
-        };
-        getUsersData();
-    }, [isActualData]);
-
-    const query = useQuery();
     return (
         <SelectUserContext.Provider value={{
             selectedUserId: selectedUser,
             selectUserById: selectUser
         }}>
-            <PopupLayout popup={'' + query.get('popup')}>
                 <div className="page__content">
-                    <h1 className="page-header">It's Users time!</h1>
+                    <h1 className="page-header">Список пользователей</h1>
                     <UserInteraction/>
-                    <UserList users={usersData}/>
+                    <UserList />
                 </div>
-            </PopupLayout>
         </SelectUserContext.Provider>
     );
 };

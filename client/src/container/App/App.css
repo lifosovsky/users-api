@@ -1,14 +1,8 @@
-.page-header {
-    font-size: 3.2rem;
-    color: #2c2c2c;
-    font-family: Roboto, sans-serif;
-}
-
 .page {
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    background: rgba(199, 199, 175, 0.25);
 }
 
 .page__content {

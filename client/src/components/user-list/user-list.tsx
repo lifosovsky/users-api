@@ -2,13 +2,15 @@ import React, { FC, useContext } from 'react';
 import { User } from '../../types/user';
 import './user-list.css';
 import { SelectUserContext } from '../../context/select-user';
+import {UsersContext} from "../../context/users-context";
 
 interface UserListProps {
-    users: User[];
+
 }
 
-const UserList: FC<UserListProps> = ({users}) => {
+const UserList: FC<UserListProps> = () => {
     const {selectedUserId, selectUserById} = useContext(SelectUserContext);
+    const {users} = useContext(UsersContext)
 
     const handleTrClick = (id: number) => {
         if (id === selectedUserId) {
@@ -33,19 +35,18 @@ const UserList: FC<UserListProps> = ({users}) => {
                 <thead>
                 <tr>
                     <th className="th__name">Id</th>
-                    <th className="th__name">Name</th>
-                    <th className="th__name">Surname</th>
-                    <th className="th__name">FatherName</th>
-                    <th className="th__name">User-Name</th>
+                    <th className="th__name">Имя</th>
+                    <th className="th__name">Фамилия</th>
+                    <th className="th__name">Отчество</th>
+                    <th className="th__name">Псевдоним</th>
                 </tr>
                 </thead>
                 <tbody>
                 {
-                    users.map((item, index) =>
+                    users.sort((a , b) => a.Id - b.Id).map((item, index) =>
                         <tr key={Date.now() + index}
                             className={`table__line ${index % 2 === 0 ? 'even' : 'odd'} ${item.Id === selectedUserId ?
-                            'selected' : ''
-                            }`}
+                            'selected' : ''}`}
                             onClick={() => handleTrClick(item.Id)}
                         >
                             <td className="user-list__item">{item.Id}</td>

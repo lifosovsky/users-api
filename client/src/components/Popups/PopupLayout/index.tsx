@@ -1,44 +1,51 @@
-import React, { FC } from 'react';
-import { GET_ENUMS } from '../../../consts/router';
+import React, {FC, useContext} from 'react';
 import AddUser from '../AddUser';
 import RemoveUser from '../RemoveUser';
 import EditUser from '../EditUser';
 import { useNavigate } from 'react-router-dom';
+import {useQuery} from "../../../hooks/router/useQuery";
+import {UsersContext} from "../../../context/users-context";
 import './index.css'
 
 interface PopupLayoutProps {
     children: React.ReactNode;
-    popup: string;
 }
 
-const popups = {
-    ADD: AddUser,
-    REMOVE: RemoveUser,
-    EDIT: EditUser,
-};
+const popupEnum = {
+    ADD: 'ADD',
+    EDIT: 'EDIT',
+    REMOVE: 'REMOVE'
+}
 
-const PopupLayout: FC<PopupLayoutProps> = ({children, popup}) => {
-    const nav = useNavigate();
+const PopupLayout: FC<PopupLayoutProps> = ({children}) => {
+    const  {setInvalidData} = useContext(UsersContext)
+    const navigate = useNavigate();
+    const query = useQuery();
+    const popup = ('' + query.get("type")).toUpperCase()
 
-    const closePopup= () => {
-        nav(-1)
+    const closePopup = () => {
+        if (window.history.state && window.history.state.idx > 0) {
+            navigate(-1);
+        } else {
+            navigate('/', { replace: true });
+        }
     }
 
     return (
         <>
             {children}
             {
-                popup.toUpperCase() === 'ADD'
+                popup === popupEnum.ADD
                     ?
-                    <div className={'popup'} onClick={closePopup}><AddUser/></div>
+                    <div className={'popup'} onClick={closePopup}><AddUser /></div>
                     :
-                    popup.toUpperCase() === 'EDIT'
+                    popup === popupEnum.EDIT
                         ?
                         <div className={'popup'} onClick={closePopup}><EditUser/></div>
                         :
-                        popup.toUpperCase() === 'REMOVE'
+                        popup === popupEnum.REMOVE
                             ?
-                            <div className={'popup'} onClick={closePopup}><RemoveUser closePopup={closePopup}/></div>
+                            <div className={'popup'} onClick={closePopup}><RemoveUser /></div>
                             :
                             null
             }
