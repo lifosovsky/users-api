@@ -1,14 +1,13 @@
-import React, {FC, useContext} from 'react';
+import React, {FC, useState} from 'react';
 import AddUser from '../AddUser';
 import RemoveUser from '../RemoveUser';
 import EditUser from '../EditUser';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useQuery} from "../../../hooks/router/useQuery";
-import {UsersContext} from "../../../context/users-context";
 import './index.css'
 
 interface PopupLayoutProps {
-    children: React.ReactNode;
+
 }
 
 const popupEnum = {
@@ -17,8 +16,7 @@ const popupEnum = {
     REMOVE: 'REMOVE'
 }
 
-const PopupLayout: FC<PopupLayoutProps> = ({children}) => {
-    const  {setInvalidData} = useContext(UsersContext)
+const PopupLayout: FC<PopupLayoutProps> = () => {
     const navigate = useNavigate();
     const query = useQuery();
     const popup = ('' + query.get("type")).toUpperCase()
@@ -27,31 +25,104 @@ const PopupLayout: FC<PopupLayoutProps> = ({children}) => {
         if (window.history.state && window.history.state.idx > 0) {
             navigate(-1);
         } else {
-            navigate('/', { replace: true });
+            navigate('/', {replace: true});
         }
     }
 
-    return (
-        <>
-            {children}
-            {
-                popup === popupEnum.ADD
-                    ?
-                    <div className={'popup'} onClick={closePopup}><AddUser /></div>
-                    :
-                    popup === popupEnum.EDIT
-                        ?
-                        <div className={'popup'} onClick={closePopup}><EditUser/></div>
-                        :
-                        popup === popupEnum.REMOVE
-                            ?
-                            <div className={'popup'} onClick={closePopup}><RemoveUser /></div>
-                            :
-                            null
-            }
+    const [position, setPosition] = useState({
+        x: 0,
+        y: 0,
+        dragging: false,
+        styles: {left: 0, top: 0}
+    })
 
-        </>
-    );
+    const dragStart = (e: React.MouseEvent) => {
+        setPosition(Object.assign({}, position, {
+            x: e.screenX - e.currentTarget.getBoundingClientRect().left,
+            y: e.screenY - e.currentTarget.getBoundingClientRect().top,
+            dragging: true
+        }))
+    }
+
+    const dragging = (e: React.MouseEvent) => {
+        if (position.dragging) {
+            const left = e.screenX - position.x;
+            const top = e.screenY - position.y;
+
+            setPosition(Object.assign({}, position, {
+                styles: {
+                    top: top,
+                    left: left
+                }
+            }))
+        }
+    }
+
+    const dragEnd = () => {
+        setPosition(Object.assign({}, position, {
+            dragging: false
+        }))
+    }
+
+    if (popup === popupEnum.ADD) {
+        return (
+            <div className={'popup'} onClick={closePopup}>
+                <div className="popup__window"
+                     onClick={(e) => e.stopPropagation()}
+                     style={{
+                         top: position.styles.top || '20%',
+                         left: position.styles.left || '25%/',
+                         position: "absolute"
+                     }}
+                     onMouseDown={dragStart}
+                     onMouseMove={dragging}
+                     onMouseUp={dragEnd}
+                >
+                    <AddUser closePopup={closePopup}/></div>
+            </div>
+        )
+    }
+
+    if (popup === popupEnum.EDIT) {
+        return (
+            <div className={'popup'} onClick={closePopup}>
+                <div className="popup__window"
+                     onClick={(e) => e.stopPropagation()}
+                     style={{
+                         top: position.styles.top || '20%',
+                         left: position.styles.left || '25%/',
+                         position: "absolute"
+                     }}
+                     onMouseDown={dragStart}
+                     onMouseMove={dragging}
+                     onMouseUp={dragEnd}
+                >
+                    <EditUser closePopup={closePopup}/></div>
+            </div>
+        )
+    }
+
+    if (popup === popupEnum.REMOVE) {
+        return (
+            <div className={'popup'} onClick={closePopup}>
+                <div className="popup__window"
+                     onClick={(e) => e.stopPropagation()}
+                     style={{
+                         top: position.styles.top || '20%',
+                         left: position.styles.left || '25%/',
+                         position: "absolute"
+                     }}
+                     onMouseDown={dragStart}
+                     onMouseMove={dragging}
+                     onMouseUp={dragEnd}
+                >
+                    <RemoveUser closePopup={closePopup}/>
+                </div>
+            </div>
+        )
+    }
+
+    return null
 };
 
 export default PopupLayout;

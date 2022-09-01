@@ -3,8 +3,7 @@
     font-size: 24px;
     font-family: Roboto, sans-serif;
     background: #50501b;
-    height: 60vh;
-    width: 50%;
+    padding: 5rem 10rem;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;

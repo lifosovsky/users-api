@@ -1,9 +1,9 @@
 import React, {FC, useContext, useEffect, useState} from 'react';
-import { useQuery } from '../../../hooks/router/useQuery';
-import { User } from '../../../types/user';
-import { ServerEndPoints, ServerUrl } from '../../../consts/server';
-import { UsersContext } from '../../../context/users-context';
-import { useNavigate } from 'react-router-dom';
+import {useQuery} from '../../../hooks/router/useQuery';
+import {User} from '../../../types/user';
+import {ServerEndPoints, ServerUrl} from '../../../consts/server';
+import {UsersContext} from '../../../context/users-context';
+import {useNavigate} from 'react-router-dom';
 import {toast} from "react-toastify";
 import './index.css'
 
@@ -24,7 +24,11 @@ const formInit: User = {
     UserName: '',
 };
 
-const EditUser: FC = () => {
+interface IEditUser {
+    closePopup: () => void;
+}
+
+const EditUser: FC<IEditUser> = ({closePopup}) => {
     const query = useQuery()
     const [value, setValue] = useState<User>(formInit);
     const {setInvalidData} = useContext(UsersContext)
@@ -77,24 +81,15 @@ const EditUser: FC = () => {
     };
 
     useEffect(() => {
-        const getUserData = async () => {
+        (async () => {
             const response = await fetch(ServerUrl + ServerEndPoints.getUserById(id))
             const user = await response.json()
             setValue(user)
-        }
-        getUserData()
+        })()
     }, [])
 
-    const closePopup = () => {
-        if (window.history.state && window.history.state.idx > 0) {
-            navigate(-1);
-        } else {
-            navigate('/', { replace: true });
-        }
-    }
-
     return (
-        <div className="popup-edit popup__window" onClick={(e) => e.stopPropagation()}>
+        <div className={'popup-edit'}>
             <div className="popup-top">
                 <h1 className="popup__header">Изменить пользователя с ID {id}</h1>
                 <button className='close-btn' onClick={closePopup}>

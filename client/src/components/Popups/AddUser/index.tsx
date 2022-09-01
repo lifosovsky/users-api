@@ -24,46 +24,15 @@ enum userFields {
     UserName = 'UserName'
 }
 
-const AddUser: FC = () => {
+interface IAddUser {
+    closePopup: () => void;
+}
+
+const AddUser: FC<IAddUser> = ({closePopup}) => {
 
     const [value, setValue] = useState<User>(formInit);
     const {setInvalidData} = useContext(UsersContext)
     const navigate = useNavigate();
-
-    const [position, setPosition] = useState({
-        x: 0,
-        y: 0,
-        dragging: false,
-        styles: {left: 0, top: 0}
-    })
-
-    const dragStart = (e: React.MouseEvent) => {
-        setPosition(Object.assign({}, position, {
-            x: e.screenX - e.currentTarget.getBoundingClientRect().left,
-            y: e.screenY - e.currentTarget.getBoundingClientRect().top,
-            dragging: true
-        }))
-    }
-
-    const dragging = (e: React.MouseEvent) => {
-        if (position.dragging) {
-            const left = e.screenX - position.x;
-            const top = e.screenY - position.y;
-
-            setPosition(Object.assign({}, position, {
-                styles: {
-                    top: top,
-                    left: left
-                }
-            }))
-        }
-    }
-
-    const dragEnd = (e: React.MouseEvent) => {
-        setPosition(Object.assign({}, position, {
-            dragging: false
-        }))
-    }
 
     const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (Number(event.target.value)) return;
@@ -103,27 +72,8 @@ const AddUser: FC = () => {
         navigate(-1)
     };
 
-    const closePopup = () => {
-        if (window.history.state && window.history.state.idx > 0) {
-            navigate(-1);
-        } else {
-            navigate('/', {replace: true});
-        }
-    }
-
     return (
-        <>
-            <div className="popup-add popup__window"
-                 onClick={(e) => e.stopPropagation()}
-                 style={{
-                     top: position.styles.top || '20%',
-                     left: position.styles.left || '25%/',
-                     position: "absolute"
-                 }}
-                 onMouseDown={dragStart}
-                 onMouseMove={dragging}
-                 onMouseUp={dragEnd}
-            >
+        <div className={'popup-add'}>
                 <div className="popup-top">
                     <h1 className="popup__header">Создать нового пользователя</h1>
                     <button className='close-btn' onClick={closePopup}>
@@ -159,8 +109,7 @@ const AddUser: FC = () => {
                     </label>
                     <button className="form__submit" onClick={submitHandle}>SUBMIT</button>
                 </div>
-            </div>
-        </>
+        </div>
     );
 };
 

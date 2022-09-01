@@ -4,6 +4,7 @@ import UserList from '../../components/user-list/user-list';
 import { SelectUserContext } from '../../context/select-user';
 import {localStorageUserKey} from "../../consts/localstorage";
 import './index.css'
+import {Outlet} from "react-router-dom";
 
 const MainPage: FC = () => {
 
@@ -30,6 +31,7 @@ const MainPage: FC = () => {
                     <h1 className="page-header">Список пользователей</h1>
                     <UserInteraction/>
                     <UserList />
+                    <Outlet />
                 </div>
         </SelectUserContext.Provider>
     );

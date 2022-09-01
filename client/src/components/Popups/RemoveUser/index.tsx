@@ -8,15 +8,14 @@ import {localStorageUserKey} from "../../../consts/localstorage";
 
 const closeIcon: string = require('../../../assets/images/close-circle-outline.svg').default
 
-interface RemoveUserProps {
-
+interface IRemoveUser {
+    closePopup: () => void;
 }
 
-const RemoveUser: FC<RemoveUserProps> = () => {
+const RemoveUser: FC<IRemoveUser> = ({closePopup}) => {
     const query = useQuery()
     const id: number = Number(query.get('id'))
     const {setInvalidData} = useContext(UsersContext)
-    const navigate = useNavigate()
 
     const handlerAccept = async () => {
         const response = await fetch(ServerUrl + ServerEndPoints.deleteRemoveUser(id), {method: 'DELETE'})
@@ -27,16 +26,8 @@ const RemoveUser: FC<RemoveUserProps> = () => {
         closePopup()
     }
 
-    const closePopup = () => {
-        if (window.history.state && window.history.state.idx > 0) {
-            navigate(-1);
-        } else {
-            navigate('/', { replace: true });
-        }
-    }
-
     return (
-        <div className="popup-remove popup__window" onClick={(e) => e.stopPropagation()}>
+        <div className={'popup-remove'}>
             <div className="popup-top">
                 <h1 className="popup__header">Удалить пользователя с ID {id} ?</h1>
                 <button className='close-btn' onClick={closePopup}>
