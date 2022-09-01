@@ -2,24 +2,15 @@ import React, { FC, useState } from 'react';
 import UserInteraction from '../../components/user-interaction/user-interaction';
 import UserList from '../../components/user-list/user-list';
 import { SelectUserContext } from '../../context/select-user';
-import {localStorageUserKey} from "../../consts/localstorage";
-import './index.css'
 import {Outlet} from "react-router-dom";
+import './index.css'
 
 const MainPage: FC = () => {
 
-    const selectedUserFromStorage = Number(localStorage.getItem(localStorageUserKey))
-
-    const [selectedUser, setSelectedUser] = useState<null | number>(selectedUserFromStorage || null);
+    const [selectedUser, setSelectedUser] = useState<null | number>(  null);
 
     const selectUser = (id: number | null) => {
-        if (id == null) {
-            localStorage.removeItem(localStorageUserKey)
-            setSelectedUser(id)
-        } else {
-            setSelectedUser(id);
-            localStorage.setItem(localStorageUserKey, JSON.stringify(id))
-        }
+        setSelectedUser(id)
     };
 
     return (

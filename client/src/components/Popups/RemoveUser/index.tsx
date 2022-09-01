@@ -3,8 +3,6 @@ import './index.css'
 import { useQuery } from '../../../hooks/router/useQuery';
 import { ServerEndPoints, ServerUrl } from '../../../consts/server';
 import { UsersContext } from '../../../context/users-context';
-import {useNavigate} from "react-router-dom";
-import {localStorageUserKey} from "../../../consts/localstorage";
 
 const closeIcon: string = require('../../../assets/images/close-circle-outline.svg').default
 
@@ -21,7 +19,6 @@ const RemoveUser: FC<IRemoveUser> = ({closePopup}) => {
         const response = await fetch(ServerUrl + ServerEndPoints.deleteRemoveUser(id), {method: 'DELETE'})
         const json = await response.json()
         console.log(json);
-        localStorage.removeItem(localStorageUserKey)
         setInvalidData()
         closePopup()
     }
