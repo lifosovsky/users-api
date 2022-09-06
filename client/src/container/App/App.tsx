@@ -6,44 +6,57 @@ import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {User} from "../../types/user";
 import {ServerEndPoints, ServerUrl} from "../../consts/server";
-import {HashRouter} from "react-router-dom";
+
+let socket: WebSocket;
 
 function App() {
 
-    const [isActualData, setIsActualData] = useState(false)
     const [users, setUsers] = useState<User[]>([])
-
-    const setActualData = () => {
-        setIsActualData(true)
-    }
-
-    const setInvalidData = () => {
-        setIsActualData(false)
-    }
+    const [isWebSocketConnected, setWebSocketConnection] = useState(true)
 
     const router = Router()
 
+    const updateData = () => {
+        socket.send('update')
+    }
+
     useEffect(() => {
+        socket = new WebSocket(`ws://${document.domain}${':8000'}/socket`)
+        socket.onopen = () => setWebSocketConnection(true);
+        socket.onclose = () => setWebSocketConnection(false);
+        socket.onmessage = (e) => {
+            setUsers(JSON.parse(e.data))
+        }
+
         (async () => {
             try {
                 const response = await fetch(ServerUrl + ServerEndPoints.getAllUsers);
                 const users = await response.json();
                 if (users == null) {
                     setUsers([])
-                    setActualData();
                     return
                 }
                 setUsers(users);
-                setActualData();
             } catch (e) {
                 console.log(e);
             }
         })()
-    }, [isActualData])
+    }, [])
+
+
+    if (!isWebSocketConnected) {
+        return (
+            <h1>Loading...</h1>
+        )
+    }
 
     return (
+        <>
             <UsersContext.Provider value={
-                {isActualData: isActualData, setActualData: setActualData, setInvalidData: setInvalidData, users: users}
+                {
+                    updateData: updateData,
+                    users: users,
+                }
             }>
                 <div className="page">
                     {router}
@@ -61,6 +74,7 @@ function App() {
                     theme="dark"
                 />
             </UsersContext.Provider>
+        </>
     );
 }
 

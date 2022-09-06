@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"learngo/models"
 	"learngo/services"
 	"net/http"
@@ -23,14 +24,26 @@ func setupCORS(w *http.ResponseWriter, req *http.Request) {
 
 func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 	setupCORS(&w, r)
-	body, _ := ioutil.ReadAll(r.Body)
+	r.ParseMultipartForm(32 << 20)
+	image, h, _ := r.FormFile("image")
+	defer image.Close()
+	imageBytes := bytes.NewBuffer(nil)
+	io.Copy(imageBytes, image)
+	user := models.User{
+		Name:       r.Form.Get("Name"),
+		SecondName: r.Form.Get("SecondName"),
+		FatherName: r.Form.Get("FatherName"),
+		UserName:   r.Form.Get("FatherName"),
+		Avatar: models.Avatar{
+			Name: h.Filename, Image: imageBytes.Bytes(),
+		},
+	}
 	s := services.UserService{Model: c.DB}
-	u := models.User{}
-	json.Unmarshal([]byte(string(body)), &u)
-	response, err := s.CreateUser(u.Name, u.SecondName, u.FatherName, u.UserName) // обращение к сервису
+	response, err := s.CreateUser(&user)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
+
 	b, _ := json.Marshal(response)
 	w.Write(b)
 }
@@ -38,7 +51,7 @@ func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	setupCORS(&w, r)
 	s := services.UserService{Model: c.DB}
-	result, err := s.GetAllUsers() // обращение к сервису
+	result, err := s.GetAllUsers()
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	}
@@ -50,7 +63,7 @@ func (c *Controller) GetUserById(w http.ResponseWriter, r *http.Request) {
 	setupCORS(&w, r)
 	s := services.UserService{Model: c.DB}
 	id, _ := strconv.Atoi(strings.Split(r.URL.Path, "/")[len(strings.Split(r.URL.Path, "/"))-1])
-	result, err := s.GetUserById(id) // обращение к сервису
+	result, err := s.GetUserById(id)
 	if err != nil {
 		w.Write([]byte("{error: " + err.Error() + "}"))
 	}
@@ -60,13 +73,17 @@ func (c *Controller) GetUserById(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) UpdateUserById(w http.ResponseWriter, r *http.Request) {
 	setupCORS(&w, r)
+	r.ParseMultipartForm(32 << 20)
 	id, _ := strconv.Atoi(strings.Split(r.URL.Path, "/")[len(strings.Split(r.URL.Path, "/"))-1])
 	s := services.UserService{Model: c.DB}
-	resBody, _ := ioutil.ReadAll(r.Body)
-	u := models.User{}
-	json.Unmarshal([]byte(string(resBody)), &u)
-	result, err := s.UpdateUserInfoById(id, u.Name, u.SecondName, u.FatherName, u.UserName); if err != nil { // обращение к сервису
-		w.Write([]byte("{error:"+ err.Error() + "}"))
+	result, err := s.UpdateUserInfoById(
+		id,
+		r.Form.Get("Name"),
+		r.Form.Get("SecondName"),
+		r.Form.Get("FatherName"),
+		r.Form.Get("UserName"))
+	if err != nil {
+		w.Write([]byte(err.Error()))
 	}
 	b, _ := json.Marshal(result)
 	w.Write(b)

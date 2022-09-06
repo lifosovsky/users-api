@@ -1,8 +1,8 @@
-import React, { FC, useContext } from 'react';
+import React, {FC, useContext} from 'react';
 import './index.css'
-import { useQuery } from '../../../hooks/router/useQuery';
-import { ServerEndPoints, ServerUrl } from '../../../consts/server';
-import { UsersContext } from '../../../context/users-context';
+import {useQuery} from '../../../hooks/router/useQuery';
+import {UsersContext} from '../../../context/users-context';
+import {ServerEndPoints, ServerUrl} from "../../../consts/server";
 
 const closeIcon: string = require('../../../assets/images/close-circle-outline.svg').default
 
@@ -13,13 +13,13 @@ interface IRemoveUser {
 const RemoveUser: FC<IRemoveUser> = ({closePopup}) => {
     const query = useQuery()
     const id: number = Number(query.get('id'))
-    const {setInvalidData} = useContext(UsersContext)
+    const {updateData} = useContext(UsersContext)
 
     const handlerAccept = async () => {
-        const response = await fetch(ServerUrl + ServerEndPoints.deleteRemoveUser(id), {method: 'DELETE'})
-        const json = await response.json()
-        console.log(json);
-        setInvalidData()
+        const response = await fetch(ServerUrl + ServerEndPoints.deleteRemoveUser(id), {
+            method: "DELETE"
+        })
+        updateData()
         closePopup()
     }
 

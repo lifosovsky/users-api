@@ -1,8 +1,9 @@
-import React, { FC, useContext } from 'react';
-import { User } from '../../types/user';
+import React, {FC, useContext} from 'react';
 import './user-list.css';
-import { SelectUserContext } from '../../context/select-user';
+import {SelectUserContext} from '../../context/select-user';
 import {UsersContext} from "../../context/users-context";
+
+const avatarTest = require('../../assets/images/edit.png')
 
 interface UserListProps {
 
@@ -25,7 +26,7 @@ const UserList: FC<UserListProps> = () => {
             <div className="user-list">
                 <h1 className="alert">В списке пока ни одного пользователя</h1>
             </div>
-            )
+        )
     }
 
 
@@ -35,6 +36,7 @@ const UserList: FC<UserListProps> = () => {
                 <thead>
                 <tr>
                     <th className="th__name">Id</th>
+                    <th className="th__name">Фотография</th>
                     <th className="th__name">Имя</th>
                     <th className="th__name">Фамилия</th>
                     <th className="th__name">Отчество</th>
@@ -43,13 +45,21 @@ const UserList: FC<UserListProps> = () => {
                 </thead>
                 <tbody>
                 {
-                    users.sort((a , b) => a.Id - b.Id).map((item, index) =>
+                    users.sort((a, b) => a.Id - b.Id).map((item, index) =>
                         <tr key={Date.now() + index}
                             className={`table__line ${index % 2 === 0 ? 'even' : 'odd'} ${item.Id === selectedUserId ?
-                            'selected' : ''}`}
+                                'selected' : ''}`}
                             onClick={() => handleTrClick(item.Id)}
                         >
                             <td className="user-list__item">{item.Id}</td>
+                            <td className="user-list__item">{
+                                <img
+                                    src={avatarTest}
+                                    alt='avatar'
+                                    width={20}
+                                    height={20}
+                                />
+                            }</td>
                             <td className="user-list__item">{item.Name}</td>
                             <td className="user-list__item">{item.SecondName}</td>
                             <td className="user-list__item">{item.FatherName}</td>

@@ -3,11 +3,13 @@ import {useQuery} from '../../../hooks/router/useQuery';
 import {User} from '../../../types/user';
 import {ServerEndPoints, ServerUrl} from '../../../consts/server';
 import {UsersContext} from '../../../context/users-context';
-import {useNavigate} from 'react-router-dom';
 import {toast} from "react-toastify";
 import './index.css'
+import {Blob} from "buffer";
+import buffer from "buffer";
 
 const closeIcon: string = require('../../../assets/images/close-circle-outline.svg').default
+const undefinedUserAvatar = require('../../../assets/images/undefined-user-avatar.png')
 
 enum userFields {
     Name = 'Name',
@@ -16,24 +18,23 @@ enum userFields {
     UserName = 'UserName'
 }
 
-const formInit: User = {
-    Id: -1,
-    Name: '',
-    SecondName: '',
-    FatherName: '',
-    UserName: '',
-};
-
 interface IEditUser {
     closePopup: () => void;
 }
 
 const EditUser: FC<IEditUser> = ({closePopup}) => {
     const query = useQuery()
-    const [value, setValue] = useState<User>(formInit);
-    const {setInvalidData} = useContext(UsersContext)
-    const navigate = useNavigate()
+    const {updateData} = useContext(UsersContext)
     const id: number = Number(query.get('id'))
+    const [value, setValue] = useState<User | null>(null);
+
+    const onImageChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files
+        if (files === null) return
+        setValue(prevState => Object.assign({}, prevState, {
+            profilePhoto: files[0],
+        }))
+    }
 
     const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (Number(event.target.value)) return;
@@ -54,39 +55,48 @@ const EditUser: FC<IEditUser> = ({closePopup}) => {
     };
 
     const submitHandle = async () => {
-        if (!isInputsCorrect()) {
+        if (value === null || !isInputsCorrect()) {
             return toast.warn('Заполните все поля!');
         }
-        try {
-            const response = await fetch(ServerUrl + ServerEndPoints.putEditUser(id), {
-                method: 'PUT',
-                body: JSON.stringify({
-                    Name: value.Name,
-                    SecondName: value.SecondName,
-                    FatherName: value.FatherName,
-                    UserName: value.UserName,
-                }),
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            const answer = await response.json();
-            console.log(answer);
-            setInvalidData()
-            navigate(-1)
-        } catch (e) {
-            toast.error('' + e)
+
+        const formData = new FormData()
+
+        for (const key in value) {
+            formData.append(key, value[key as keyof User] as string)
         }
+
+
+        const resposne = await fetch(ServerUrl + ServerEndPoints.putEditUser(id), {
+            method: "PUT",
+            body: formData
+        })
+        updateData()
+        closePopup();
     };
 
     useEffect(() => {
         (async () => {
             const response = await fetch(ServerUrl + ServerEndPoints.getUserById(id))
             const user = await response.json()
-            setValue(user)
+            console.log(user)
+            setValue({
+                Id: 0,
+                Name: "test",
+                SecondName: "test",
+                FatherName: "test",
+                UserName: "test",
+                profilePhoto: user.Avatar.Image,
+            })
         })()
     }, [])
+
+    if (value === null) {
+        return (
+            <div className="popup-top">
+                <h1 className="popup__header">Loading...</h1>
+            </div>
+        )
+    }
 
     return (
         <div className={'popup-edit'}>
@@ -97,6 +107,22 @@ const EditUser: FC<IEditUser> = ({closePopup}) => {
                 </button>
             </div>
             <div className="form">
+                <label className='label-image'>
+                    <input
+                        className='input-image'
+                        type='file'
+                        multiple={false}
+                        accept='image/*'
+                        onChange={onImageChangeHandler}
+                    />
+                    <img
+                        src={value.profilePhoto ? `data:image/jpeg;base64, ${value.profilePhoto}` : undefinedUserAvatar}
+                        alt='avatar'
+                        width={100}
+                        height={100}
+                    >
+                    </img>
+                </label>
                 <label>
                     Имя:
                     <input className="form__input" type="text" onChange={inputHandler} name={userFields.Name}
@@ -123,7 +149,7 @@ const EditUser: FC<IEditUser> = ({closePopup}) => {
                            value={value[userFields.UserName] || ''}
                     />
                 </label>
-                <button className="form__submit" onClick={submitHandle}>SUBMIT</button>
+                <button className="form__submit" onClick={submitHandle}>Редактировать</button>
             </div>
         </div>
     )

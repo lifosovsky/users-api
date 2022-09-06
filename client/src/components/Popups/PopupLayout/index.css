@@ -31,7 +31,7 @@
 
 .popup__window {
     border-radius: 2rem;
-    position: relative;
+    position: absolute;
 }
 
 .popup__header {
@@ -61,6 +61,25 @@
     color: #f6c2c2;
     width: 400px;
     transition: all 0.3s 0s linear;
+}
+
+.input-image {
+    border: none;
+    display: none;
+}
+
+.label-image {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.delete-image-btn {
+    font-size: 1.2rem;
+    padding: 1rem;
+    margin: 0;
+    width: 10rem;
+    height: 10rem;
 }
 
 label {

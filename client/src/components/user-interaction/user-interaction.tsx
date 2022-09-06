@@ -6,7 +6,7 @@ import {toast} from "react-toastify";
 
 const addIcon = require('../../assets/images/person-add-outline.svg').default
 const removeIcon: string = require('../../assets/images/trash-outline.svg').default
-const editIcon: string = require('../../assets/images/person-outline.svg').default
+const editIcon: string = require('../../assets/images/edit.png')
 
 const popupUrl = 'user'
 

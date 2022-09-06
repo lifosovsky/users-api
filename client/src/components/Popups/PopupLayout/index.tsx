@@ -69,14 +69,13 @@ const PopupLayout: FC<PopupLayoutProps> = () => {
             <div className={'popup'} onClick={closePopup}>
                 <div className="popup__window"
                      onClick={(e) => e.stopPropagation()}
-                     style={{
-                         top: position.styles.top || '20%',
-                         left: position.styles.left || '25%/',
-                         position: "absolute"
-                     }}
                      onMouseDown={dragStart}
                      onMouseMove={dragging}
                      onMouseUp={dragEnd}
+                     style={{
+                         top: position.styles.top || '10%',
+                         left: position.styles.left || '30%',
+                     }}
                 >
                     <AddUser closePopup={closePopup}/></div>
             </div>
@@ -88,14 +87,13 @@ const PopupLayout: FC<PopupLayoutProps> = () => {
             <div className={'popup'} onClick={closePopup}>
                 <div className="popup__window"
                      onClick={(e) => e.stopPropagation()}
-                     style={{
-                         top: position.styles.top || '20%',
-                         left: position.styles.left || '25%/',
-                         position: "absolute"
-                     }}
                      onMouseDown={dragStart}
                      onMouseMove={dragging}
                      onMouseUp={dragEnd}
+                     style={{
+                         top: position.styles.top || '20%',
+                         left: position.styles.left || '25%',
+                     }}
                 >
                     <EditUser closePopup={closePopup}/></div>
             </div>
@@ -109,8 +107,7 @@ const PopupLayout: FC<PopupLayoutProps> = () => {
                      onClick={(e) => e.stopPropagation()}
                      style={{
                          top: position.styles.top || '20%',
-                         left: position.styles.left || '25%/',
-                         position: "absolute"
+                         left: position.styles.left || '30%',
                      }}
                      onMouseDown={dragStart}
                      onMouseMove={dragging}

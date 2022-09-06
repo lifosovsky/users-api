@@ -2,6 +2,7 @@ package services
 
 import (
 	"database/sql"
+	"fmt"
 	"learngo/models"
 )
 
@@ -9,11 +10,17 @@ type UserService struct {
 	Model *sql.DB
 }
 
+var picDir = "/pics"
+
 // CreateUser ...
-func (us *UserService) CreateUser(name, secondName, fatherName, username string) (u models.User, err error) {
-	u = models.User{Name: name, SecondName: secondName, FatherName: fatherName, UserName: username}
+func (us *UserService) CreateUser(newUser *models.User) (u models.User, err error) {
+	u = models.User{Name: newUser.Name, SecondName: newUser.SecondName, FatherName: newUser.FatherName, UserName: newUser.UserName}
 	err = us.Model.QueryRow("INSERT INTO users(name, secondname, fathername, username) values ($1, $2, $3, $4) RETURNING *",
 		u.Name, u.SecondName, u.FatherName, u.UserName).Scan(&u.Id, &u.Name, &u.SecondName, &u.FatherName, &u.UserName)
+	err = us.Model.QueryRow("INSERT INTO avatars(name, image, user_id) values($1, $2, $3) RETURNING avatars.image, avatars.name",
+		newUser.Avatar.Name, newUser.Avatar.Image, u.Id).
+		Scan(&u.Avatar.Image, &u.Avatar.Name)
+	fmt.Println("error: \n", err)
 	return
 }
 
@@ -33,7 +40,10 @@ func (us *UserService) GetAllUsers() (array []models.User, err error) {
 
 // GetUserById ...
 func (us *UserService) GetUserById(id int) (u models.User, err error) {
-	err = us.Model.QueryRow("SELECT * FROM users WHERE id=$1", id).Scan(&u.Id, &u.Name, &u.SecondName, &u.FatherName, &u.UserName)
+	//err = us.Model.QueryRow("SELECT * FROM users WHERE id=$1", id).Scan(&u.Id, &u.Name, &u.SecondName, &u.FatherName, &u.UserName)
+	err = us.Model.QueryRow(
+		"SELECT u.id, u.name, u.secondname, u.fathername, u.username, av.name, av.image FROM users u INNER JOIN avatars av on av.user_id=u.id WHERE u.id=$1",
+		id).Scan(&u.Id, &u.Name, &u.SecondName, &u.FatherName, &u.UserName, &u.Avatar.Name, &u.Avatar.Image)
 	return
 }
 
@@ -49,7 +59,3 @@ func (us *UserService) UpdateUserInfoById(id int, name, secondName, fatherName, 
 		id, name, secondName, fatherName, username).Scan(&u.Id, &u.Name, &u.SecondName, &u.FatherName, &u.UserName)
 	return
 }
-
-
-
-
