@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"learngo/models"
 	"learngo/services"
@@ -25,7 +26,10 @@ func setupCORS(w *http.ResponseWriter, req *http.Request) {
 func (c *Controller) CreateUser(w http.ResponseWriter, r *http.Request) {
 	setupCORS(&w, r)
 	r.ParseMultipartForm(32 << 20)
-	image, h, _ := r.FormFile("image")
+	image, h, err := r.FormFile("Avatar")
+	if err != nil {
+		fmt.Println("FILE ERROR!!!", err)
+	}
 	defer image.Close()
 	imageBytes := bytes.NewBuffer(nil)
 	io.Copy(imageBytes, image)

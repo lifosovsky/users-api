@@ -10,7 +10,7 @@ const undefinedUserAvatar = require('../../../assets/images/undefined-user-avata
 
 const formInit: User = {
     Id: -1,
-    profilePhoto: null,
+    Avatar: null,
     Name: '',
     SecondName: '',
     FatherName: '',
@@ -38,7 +38,7 @@ const AddUser: FC<IAddUser> = ({closePopup}) => {
         const files = event.target.files
         if (files === null) return
         setValue(prevState => Object.assign({}, prevState, {
-            profilePhoto: files[0],
+            Avatar: files[0],
         }))
     }
 
@@ -68,16 +68,19 @@ const AddUser: FC<IAddUser> = ({closePopup}) => {
         const formData = new FormData()
 
         for (const key in value) {
-            formData.append(key, value[key as keyof User] as Blob)
+            formData.append(key, value[key as keyof User] as string)
+            console.log(key, value[key as keyof User] as string)
         }
 
-        if (value.profilePhoto === null) {
-            formData.append("profilePhoto", undefinedUserAvatar)
+        if (formData.get("Avatar") === "null") {
+            formData.set("Avatar", undefinedUserAvatar as File)
         }
+
+        console.log(typeof undefinedUserAvatar)
 
         const response = await fetch(ServerUrl + ServerEndPoints.postCreateUser, {
             method: "POST",
-            body: formData
+            body: formData,
         })
         updateData()
         closePopup()
@@ -101,7 +104,7 @@ const AddUser: FC<IAddUser> = ({closePopup}) => {
                         onChange={onImageChangeHandler}
                     />
                     <img
-                        src={value.profilePhoto ? URL.createObjectURL(value.profilePhoto) : undefinedUserAvatar}
+                        src={value.Avatar ? URL.createObjectURL(value.Avatar) : URL.createObjectURL(new Blob([undefinedUserAvatar]))}
                         alt='avatar'
                         width={100}
                         height={100}

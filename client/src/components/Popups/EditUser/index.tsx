@@ -85,7 +85,7 @@ const EditUser: FC<IEditUser> = ({closePopup}) => {
                 SecondName: "test",
                 FatherName: "test",
                 UserName: "test",
-                profilePhoto: user.Avatar.Image,
+                Avatar: user.Avatar.Image,
             })
         })()
     }, [])
@@ -116,7 +116,7 @@ const EditUser: FC<IEditUser> = ({closePopup}) => {
                         onChange={onImageChangeHandler}
                     />
                     <img
-                        src={value.profilePhoto ? `data:image/jpeg;base64, ${value.profilePhoto}` : undefinedUserAvatar}
+                        src={value.Avatar ? `data:image/jpeg;base64, ${value.Avatar}` : undefinedUserAvatar}
                         alt='avatar'
                         width={100}
                         height={100}
